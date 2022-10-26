@@ -1,3 +1,34 @@
+update 10/26/2022: it's possible (and rather convenient) to build the client directly for raspberry PI on windows as well as windows. to accomplish this, simply open build.gradle (right in vscode) and ensure the implementation lines for windowsx86-64 and linuxraspbian are uncommented (around line 28):
+
+implementation "edu.wpi.first.ntcore:ntcore-jni:2022.4.1:windowsx86-64"
+implementation "edu.wpi.first.ntcore:ntcore-jni:2022.4.1:linuxraspbian"
+
+this will cause the compiler to include all libraries (including shared objects (.so) and dynamic libaries (DLL)) in the resulting jar file. so no other libraries are required to run the jar file on raspberry PI or on windows. the same jar file will run on both. 
+
+to build the jar file open the command drop down menu (ctrl-shift-p) and choose 
+Java: Export Jar...
+
+it will then ask to select the main class, select NetworkTablesDesktopClient
+
+it will then ask to select the elements, select all of them (this should be the default) and click ok.
+
+once it is done building, there will be a popup that it successfully export jar to some directory, to easily get to this directory click on the Reveal in File Explorer button.
+
+in file explorer there will be a file ClientSideNetworkTables.jar
+to run this on raspberry PI, copy this file to the raspberry PI. then ssh (or from the PI desktop) cd to the directory where the file was copied and run:
+
+java -jar ClientSideNetworkTables.jar
+
+that will startup the java application and run the file.
+
+on windows open a command window, cd to the jar file location and enter the same command line, this will run the jar file.
+
+you can also run the client directly in vscode (including debugging) by clicking on NetworkTablesDesktopClient.java then clicking on the Run icon (looks like a empty triangle pointing to the right in the upper right corner of the window. can also run it in the debugger by cliking the dropdown next to the Run icon and choosing Debug Java.
+
+
+SOME OLD NOTES: you can also create copy the java file to raspberry, compile the file using javac and run this on raspberry PI. but you need to copy the libraries from the FRC raspberry image. here are some notes:
+
+
 setup LD_LIBRARY_PATH to path containing all frc .so files. for example:
 
 export LD_LIBRARY_PATH=/usr/local/frc/lib/
