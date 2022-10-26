@@ -1,0 +1,19 @@
+setup LD_LIBRARY_PATH to path containing all frc .so files. for example:
+
+export LD_LIBRARY_PATH=/usr/local/frc/lib/
+
+compile the java file into a class using javac command, for example:
+
+javac -cp /usr/local/frc/java/ntcore.jar  NetworkTablesDesktopClient.java 
+
+NOTE: only include the jar files you need to cover the import statements in the java file. ie you cannot use /usr/.../jave/*
+
+to run the java program use java as such:
+
+java -cp .:/usr/local/frc/java/* NetworkTablesDesktopClient
+
+this will find the main(args) function in the last name class specified by the last argument (NetworkTablesDesktopClient). BUT you must include the path (relative or full) to the .class file.
+
+NOTE: here you need to specify all referenced java classes in the -cp, fortunately you can use a wildcard in the -cp. don't forget to include the path to the main class file
+
+i uploaded the raspberry PI wpilib libraries (java and so) to the AndromedaOneSoftwareTeam google drive in a tgz file.
