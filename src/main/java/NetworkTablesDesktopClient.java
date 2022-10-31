@@ -12,23 +12,25 @@ public class NetworkTablesDesktopClient {
   }
 
   public void run() {
+    double piNumb = 0;
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable table = inst.getTable("datatable");
-    NetworkTableEntry xEntry = table.getEntry("x");
-    NetworkTableEntry yEntry = table.getEntry("y");
+    NetworkTable table = inst.getTable("SmartDashboard");
+    NetworkTableEntry xEntry = table.getEntry("myCounter");
+    NetworkTableEntry piNumbEntry = table.getEntry("piNumb");
     inst.startClientTeam(m_teamNumber);
     // recommended if running on DS computer; this gets the robot IP from the DS
     inst.startDSClient();
     while (true) {
       try {
-        Thread.sleep(1000);
+        Thread.sleep(250);
       } catch (InterruptedException ex) {
         System.out.println("interrupted");
         return;
       }
-      double x = xEntry.getDouble(0.0);
-      double y = yEntry.getDouble(0.0);
-      System.out.println("X: " + x + " Y: " + y);
+      Number myCounter = xEntry.getNumber(0.0);
+      System.out.println("myCounter = " + myCounter);
+      piNumbEntry.setDouble(piNumb++);
+      System.out.println("piNumb = " + piNumb);
     }
   }
 }
