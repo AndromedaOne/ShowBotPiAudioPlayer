@@ -3,12 +3,12 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class NetworkTablesDesktopClient {
+public class ShowBotPiAudioPlayer {
   private final int m_teamNumber = 4905;
 
   public static void main(String[] args) throws Exception {
     System.out.println("Hello, World!");
-    new NetworkTablesDesktopClient().run();
+    new ShowBotPiAudioPlayer().run();
   }
 
   public void run() {
