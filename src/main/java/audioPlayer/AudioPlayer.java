@@ -17,7 +17,7 @@ import logger.Log;
 
 // Audio player interface. implemented as a singlton to ensure only one exists
 public class AudioPlayer {
-  private AudioPlayer m_instance = new AudioPlayer();
+  private static AudioPlayer m_instance = new AudioPlayer();
   private Clip m_audioClip = null;
   private String m_audioFileBeingPlayed;
 
@@ -25,7 +25,7 @@ public class AudioPlayer {
 
   }
 
-  public AudioPlayer getInstance() {
+  public static AudioPlayer getInstance() {
     if (m_instance == null) {
       m_instance = new AudioPlayer();
     }
@@ -36,7 +36,8 @@ public class AudioPlayer {
   // this method will immediately play the audio file passed in. if the player is
   // already
   // playing an audio file, that audio will be stopped and the new one started.
-  public void playAudioFile(String audioFilePath) {
+  // returns true on success, false on error
+  public boolean playAudioFile(String audioFilePath) {
     if (m_audioClip != null) {
       m_audioClip.stop();
       m_audioClip.close();
@@ -48,40 +49,32 @@ public class AudioPlayer {
         audioInputStream = AudioSystem
             .getAudioInputStream(new File(audioFilePath).getAbsoluteFile());
       } catch (UnsupportedAudioFileException e) {
-        String err = "ERROR: unsupported audio file: " + audioFilePath;
-        Log.getInstance().write(err);
+        Log.getInstance().write("ERROR: unsupported audio file: " + audioFilePath);
         Log.getInstance().writeException(e);
-        System.err.println(err);
-        e.printStackTrace();
         m_audioClip = null;
         m_audioFileBeingPlayed = "";
-        return;
+        return false;
       }
       try {
         m_audioClip = AudioSystem.getClip();
         m_audioClip.open(audioInputStream);
       } catch (LineUnavailableException e) {
-        String err = "ERROR: Audio System threw line unavailable, not playing clip";
-        System.err.println(err);
-        e.printStackTrace();
-        Log.getInstance().write(err);
+        Log.getInstance().write("ERROR: Audio System threw line unavailable, not playing clip");
         Log.getInstance().writeException(e);
         m_audioClip = null;
         m_audioFileBeingPlayed = "";
-        return;
+        return false;
       }
     } catch (IOException e) {
-      String err = "ERROR: Audio System threw IOException, not playing clip";
-      System.err.println(err);
-      e.printStackTrace();
-      Log.getInstance().write(err);
+      Log.getInstance().write("ERROR: Audio System threw IOException, not playing clip");
       Log.getInstance().writeException(e);
       m_audioClip = null;
       m_audioFileBeingPlayed = "";
-      return;
+      return false;
     }
     m_audioClip.start();
     m_audioFileBeingPlayed = audioFilePath;
+    return true;
   }
 
   public void stop() {

@@ -22,9 +22,11 @@ public class Log {
   private static String s_logCountFileName = "logCount";
   private static Log s_instance = null;
   BufferedWriter m_logWriter = null;
+  FlushThread m_flushThread = new FlushThread();
 
   private Log() {
     createNewLogFile();
+    m_flushThread.start();
   }
 
   public static Log getInstance() {
@@ -81,7 +83,9 @@ public class Log {
     }
   }
 
+  // this will write to both the stdout and the log file
   public void write(String message) {
+    System.out.println("message");
     if (m_logWriter != null) {
       try {
         m_logWriter.write(message + "\n");
@@ -93,11 +97,13 @@ public class Log {
     }
   }
 
+  // this will write to both stderr and the log file
   public void writeException(Exception e) {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
     e.printStackTrace(pw);
     write(sw.toString());
+    e.printStackTrace();
   }
 
   public void flush() {
@@ -123,4 +129,18 @@ public class Log {
       m_logWriter = null;
     }
   }
+
+  private class FlushThread extends Thread {
+    public void run() {
+      while (true) {
+        try {
+          Thread.sleep(5000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        Log.getInstance().flush();
+      }
+    }
+  }
+
 }
