@@ -13,6 +13,8 @@ import logger.Log;
 public class NetworkTableInterface {
   private final String m_smartDashboardName = "SmartDashboard";
   private final int m_teamNumber = 4905;
+
+  // smartdashboard keys
   private final String m_audioFileToPlayKey = "audioFileToPlay";
   private final String m_currentAudioFilePlayingKey = "audioFileCurrentlyPlaying";
   private final String m_audioIsPlayingKey = "audioIsPlaying";
@@ -21,8 +23,7 @@ public class NetworkTableInterface {
 
   private final String m_showBotPiIsConnected = "ShowBotPiIsConnected";
   private final String m_roborioAckPiConnected = "RoborioAckPiConnected";
-
-  private final String m_noError = "NoError";
+  private final String m_noError = "";
 
   private NetworkTableInstance m_ntInst = NetworkTableInstance.getDefault();
   private NetworkTable m_smartDashboardTable = m_ntInst.getTable(m_smartDashboardName);
