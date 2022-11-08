@@ -27,18 +27,19 @@ public class NetworkTableInterface {
 
   private NetworkTableInstance m_ntInst = NetworkTableInstance.getDefault();
   private NetworkTable m_smartDashboardTable = m_ntInst.getTable(m_smartDashboardName);
-  private NetworkTableEntry m_showBotPiConnected = m_smartDashboardTable.
-    getEntry(m_showBotPiAudioPlayerConnectedKey);
-  private NetworkTableEntry m_audioFileToPlay = m_smartDashboardTable.getEntry(m_audioFileToPlayKey);
-  private NetworkTableEntry m_currentAudioPlaying = m_smartDashboardTable.
-    getEntry(m_currentAudioFilePlayingKey);
+  private NetworkTableEntry m_showBotPiConnected = m_smartDashboardTable
+      .getEntry(m_showBotPiAudioPlayerConnectedKey);
+  private NetworkTableEntry m_audioFileToPlay = m_smartDashboardTable
+      .getEntry(m_audioFileToPlayKey);
+  private NetworkTableEntry m_currentAudioPlaying = m_smartDashboardTable
+      .getEntry(m_currentAudioFilePlayingKey);
   private NetworkTableEntry m_audioIsPlaying = m_smartDashboardTable.getEntry(m_audioIsPlayingKey);
   private NetworkTableEntry m_errorStatus = m_smartDashboardTable.getEntry(m_errorStatusKey);
 
   public NetworkTableInterface() {
     Log.getInstance().write("INFO: Connecting to SmartDashboard");
     m_ntInst.startClientTeam(m_teamNumber);
-    while(!m_ntInst.isConnected()) {
+    while (!m_ntInst.isConnected()) {
       try {
         Log.getInstance().write("INFO: waiting to for connection to roborio");
         Thread.sleep(1000);
@@ -55,7 +56,7 @@ public class NetworkTableInterface {
 
   public boolean didRoborioAckPiConnected() {
     String ack = m_showBotPiConnected.getString(m_showBotPiIsConnected);
-    if(ack.equals(m_roborioAckPiConnected)) {
+    if (ack.equals(m_roborioAckPiConnected)) {
       return true;
     }
     return false;
