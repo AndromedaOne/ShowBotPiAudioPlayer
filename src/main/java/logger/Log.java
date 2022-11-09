@@ -97,8 +97,11 @@ public class Log {
     }
   }
 
-  // this will write to both stderr and the log file
-  public void writeException(Exception e) {
+  // this will write to both stderr and the log file.
+  // pass exceptions and errors to this via the base class Throwable to make it as
+  // generic
+  // as possible
+  public void writeException(Throwable e) {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
     e.printStackTrace(pw);

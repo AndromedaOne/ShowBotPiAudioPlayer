@@ -20,46 +20,58 @@ public class ShowBotPiAudioPlayer {
     int count = 0;
     while (!connected) {
       if ((count % 50) == 0) {
-        Log.getInstance().write("INFO: testing if roborio has ack'ed");
-        if (m_networkTableInterface.didRoborioAckPiConnected()) {
-          Log.getInstance().write("INFO: roborio has ack'ed connection");
-          break;
-        }
+        // only log this once a second so we don't flood the log file
+        Log.getInstance().write("INFO: waiting for roborio to ack connection");
       }
-      count++;
+      ++count;
+      if (m_networkTableInterface.didRoborioAckPiConnected()) {
+        Log.getInstance().write("INFO: roborio has ack'ed connection");
+        break;
+      }
+      try {
+        Thread.sleep(m_sleepTimeMS);
+      } catch (InterruptedException e) {
+        Log.getInstance().writeException(e);
+        Log.getInstance().write("EXITING....");
+        return;
+      }
     }
     String lastAudioFileRequested = "";
     while (true) {
-      String audioFileToPlay = m_networkTableInterface.getRequestedAudioFileToPlay();
-      if (!lastAudioFileRequested.equals(audioFileToPlay)) {
-        Log.getInstance().write("INFO: roborio has requested the audio file: " + audioFileToPlay);
-        String audioFileFullPath = m_piAudioFilesDirPath + "/" + audioFileToPlay;
-        File audioFile = new File(audioFileFullPath);
-        if (!audioFile.exists()) {
-          String err = "ERROR: audio file " + audioFileToPlay + " does not exist";
-          Log.getInstance().write(err);
-          m_networkTableInterface.setErrorStatus(err);
-        } else {
-          if (!AudioPlayer.getInstance().playAudioFile(audioFile)) {
-            m_networkTableInterface
-                .setErrorStatus("ERROR: unable to play audio file: " + audioFileFullPath);
-          } else {
-            m_networkTableInterface.clearErrorStatus();
-            m_networkTableInterface.setCurrentAudioPlaying(audioFileToPlay);
-          }
-        }
-        lastAudioFileRequested = audioFileToPlay;
-        Log.getInstance().write("Last: " + lastAudioFileRequested + "@");
-        Log.getInstance().write("Requ: " + audioFileToPlay + "@");
-      }
-      m_networkTableInterface.setAudioIsPlaying(AudioPlayer.getInstance().isPlaying());
       try {
-        Thread.sleep(m_sleepTimeMS);
-      } catch (InterruptedException ex) {
-        System.out.println("interrupted");
-        return;
+        String audioFileToPlay = m_networkTableInterface.getRequestedAudioFileToPlay();
+        if (!lastAudioFileRequested.equals(audioFileToPlay)) {
+          Log.getInstance().write("INFO: roborio has requested the audio file: " + audioFileToPlay);
+          String audioFileFullPath = m_piAudioFilesDirPath + "/" + audioFileToPlay;
+          File audioFile = new File(audioFileFullPath);
+          if (!audioFile.exists()) {
+            String err = "ERROR: audio file " + audioFileToPlay + " does not exist";
+            Log.getInstance().write(err);
+            m_networkTableInterface.setErrorStatus(err);
+          } else {
+            if (!AudioPlayer.getInstance().playAudioFile(audioFile)) {
+              m_networkTableInterface
+                  .setErrorStatus("ERROR: unable to play audio file: " + audioFileFullPath);
+            } else {
+              m_networkTableInterface.clearErrorStatus();
+              m_networkTableInterface.setCurrentAudioPlaying(audioFileToPlay);
+            }
+          }
+          lastAudioFileRequested = audioFileToPlay;
+          Log.getInstance().write("Last: " + lastAudioFileRequested + "@");
+          Log.getInstance().write("Requ: " + audioFileToPlay + "@");
+        }
+        m_networkTableInterface.setAudioIsPlaying(AudioPlayer.getInstance().isPlaying());
+        try {
+          Thread.sleep(m_sleepTimeMS);
+        } catch (InterruptedException ex) {
+          Log.getInstance().writeException(ex);
+          Log.getInstance().write("EXITING....");
+          return;
+        }
+      } catch (Throwable throwable) {
+        Log.getInstance().writeException(throwable);
       }
-
     }
   }
 }
