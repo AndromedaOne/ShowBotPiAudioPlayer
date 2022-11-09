@@ -37,7 +37,7 @@ public class Log {
   }
 
   void createNewLogFile() {
-    String logDirPath = System.getProperty("java.io.tmpdir") + s_logDirName;
+    String logDirPath = System.getProperty("java.io.tmpdir") + "/" + s_logDirName;
     try {
       File directory = new File(logDirPath);
       if (!directory.exists()) {

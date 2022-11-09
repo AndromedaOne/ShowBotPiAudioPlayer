@@ -37,7 +37,7 @@ public class AudioPlayer {
   // already
   // playing an audio file, that audio will be stopped and the new one started.
   // returns true on success, false on error
-  public boolean playAudioFile(String audioFilePath) {
+  public boolean playAudioFile(File audioFilePath) {
     if (m_audioClip != null) {
       m_audioClip.stop();
       m_audioClip.close();
@@ -46,8 +46,7 @@ public class AudioPlayer {
     AudioInputStream audioInputStream;
     try {
       try {
-        audioInputStream = AudioSystem
-            .getAudioInputStream(new File(audioFilePath).getAbsoluteFile());
+        audioInputStream = AudioSystem.getAudioInputStream(audioFilePath.getAbsoluteFile());
       } catch (UnsupportedAudioFileException e) {
         Log.getInstance().write("ERROR: unsupported audio file: " + audioFilePath);
         Log.getInstance().writeException(e);
@@ -73,7 +72,7 @@ public class AudioPlayer {
       return false;
     }
     m_audioClip.start();
-    m_audioFileBeingPlayed = audioFilePath;
+    m_audioFileBeingPlayed = audioFilePath.toString();
     return true;
   }
 
