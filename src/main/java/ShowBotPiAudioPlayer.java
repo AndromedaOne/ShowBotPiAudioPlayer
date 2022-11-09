@@ -45,10 +45,10 @@ public class ShowBotPiAudioPlayer {
                 .setErrorStatus("ERROR: unable to play audio file: " + audioFileFullPath);
           } else {
             m_networkTableInterface.clearErrorStatus();
+            m_networkTableInterface.setCurrentAudioPlaying(audioFileToPlay);
           }
         }
         lastAudioFileRequested = audioFileToPlay;
-        m_networkTableInterface.setCurrentAudioPlaying(audioFileToPlay);
         Log.getInstance().write("Last: " + lastAudioFileRequested + "@");
         Log.getInstance().write("Requ: " + audioFileToPlay + "@");
       }
