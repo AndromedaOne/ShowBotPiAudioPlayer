@@ -36,32 +36,41 @@ public class ShowBotPiAudioPlayer {
         return;
       }
     }
-    String lastAudioFileRequested = "";
     while (true) {
       try {
-        String audioFileToPlay = m_networkTableInterface.getRequestedAudioFileToPlay();
-        if (!lastAudioFileRequested.equals(audioFileToPlay)) {
-          Log.getInstance().write("INFO: roborio has requested the audio file: " + audioFileToPlay);
-          String audioFileFullPath = m_piAudioFilesDirPath + "/" + audioFileToPlay;
-          File audioFile = new File(audioFileFullPath);
-          if (!audioFile.exists()) {
-            String err = "ERROR: audio file " + audioFileToPlay + " does not exist";
-            Log.getInstance().write(err);
-            m_networkTableInterface.setErrorStatus(err);
-          } else {
-            if (!AudioPlayer.getInstance().playAudioFile(audioFile)) {
-              m_networkTableInterface
-                  .setErrorStatus("ERROR: unable to play audio file: " + audioFileFullPath);
+        if (!AudioPlayer.getInstance().isPlaying()) {
+          String audioFileToPlay = m_networkTableInterface.getRequestedAudioFileToPlay();
+          if (!audioFileToPlay.equals("")) {
+            Log.getInstance().write("INFO: roborio has requested the audio file: " + 
+              audioFileToPlay);
+            String audioFileFullPath = m_piAudioFilesDirPath + "/" + audioFileToPlay;
+            File audioFile = new File(audioFileFullPath);
+            if (!audioFile.exists()) {
+              String err = "ERROR: audio file " + audioFileToPlay + " does not exist";
+              Log.getInstance().write(err);
+              m_networkTableInterface.setErrorStatus(err);
             } else {
-              m_networkTableInterface.clearErrorStatus();
-              m_networkTableInterface.setCurrentAudioPlaying(audioFileToPlay);
+              if (!AudioPlayer.getInstance().playAudioFile(audioFile)) {
+                String err = "ERROR: unable to play audio file: " + audioFileFullPath;
+                m_networkTableInterface.setErrorStatus(err);
+                Log.getInstance().write(err);
+              } else {
+                m_networkTableInterface.clearErrorStatus();
+                m_networkTableInterface.setCurrentAudioPlaying(audioFileToPlay);
+                Log.getInstance().write("INFO: playing " + audioFileToPlay);
+              }
             }
+            m_networkTableInterface.clearRequestedAudioFileToPlay();
+          } else {
+            m_networkTableInterface.setCurrentAudioPlaying("");
           }
-          lastAudioFileRequested = audioFileToPlay;
-          Log.getInstance().write("Last: " + lastAudioFileRequested + "@");
-          Log.getInstance().write("Requ: " + audioFileToPlay + "@");
         }
         m_networkTableInterface.setAudioIsPlaying(AudioPlayer.getInstance().isPlaying());
+        if(m_networkTableInterface.getStopAudio()) {
+          AudioPlayer.getInstance().stop();
+          m_networkTableInterface.clearStopAudio();
+          m_networkTableInterface.clearRequestedAudioFileToPlay();
+        }
         try {
           Thread.sleep(m_sleepTimeMS);
         } catch (InterruptedException ex) {

@@ -15,15 +15,17 @@ public class NetworkTableInterface {
   private final int m_teamNumber = 4905;
 
   // smartdashboard keys
-  private final String m_audioFileToPlayKey = "audioFileToPlay";
-  private final String m_currentAudioFilePlayingKey = "audioFileCurrentlyPlaying";
-  private final String m_audioIsPlayingKey = "audioIsPlaying";
+  private final String m_audioFileToPlayKey = "showBotAudioFileToPlay";
+  private final String m_currentAudioFilePlayingKey = "showBotAudioFileCurrentlyPlaying";
+  private final String m_audioIsPlayingKey = "showBotAudioIsPlaying";
   private final String m_showBotPiAudioPlayerConnectedKey = "showBotPiAudioConnected";
   private final String m_errorStatusKey = "showBotPiAudioErrorStatus";
+  private final String m_stopAudioKey = "showBotStopPiAudio";
 
   private final String m_showBotPiIsConnected = "ShowBotPiIsConnected";
   private final String m_roborioAckPiConnected = "RoborioAckPiConnected";
   private final String m_noError = "";
+  
 
   private NetworkTableInstance m_ntInst = NetworkTableInstance.getDefault();
   private NetworkTable m_smartDashboardTable = m_ntInst.getTable(m_smartDashboardName);
@@ -35,6 +37,7 @@ public class NetworkTableInterface {
       .getEntry(m_currentAudioFilePlayingKey);
   private NetworkTableEntry m_audioIsPlaying = m_smartDashboardTable.getEntry(m_audioIsPlayingKey);
   private NetworkTableEntry m_errorStatus = m_smartDashboardTable.getEntry(m_errorStatusKey);
+  private NetworkTableEntry m_stopAudio = m_smartDashboardTable.getEntry(m_stopAudioKey);
 
   public NetworkTableInterface() {
     Log.getInstance().write("INFO: Connecting to SmartDashboard");
@@ -52,6 +55,8 @@ public class NetworkTableInterface {
     m_audioIsPlaying.setBoolean(false);
     m_currentAudioPlaying.setString("");
     m_errorStatus.setString(m_noError);
+    m_audioFileToPlay.setString("");
+    m_stopAudio.setBoolean(false);
   }
 
   public boolean didRoborioAckPiConnected() {
@@ -66,6 +71,10 @@ public class NetworkTableInterface {
     return m_audioFileToPlay.getString("");
   }
 
+  public void clearRequestedAudioFileToPlay() {
+    m_audioFileToPlay.setString("");
+  }
+  
   public void setErrorStatus(String err) {
     m_errorStatus.setString(err);
   }
@@ -80,5 +89,13 @@ public class NetworkTableInterface {
 
   public void setAudioIsPlaying(boolean isPlaying) {
     m_audioIsPlaying.setBoolean(isPlaying);
+  }
+
+  public boolean getStopAudio() {
+    return m_stopAudio.getBoolean(false);
+  }
+
+  public void clearStopAudio() {
+    m_stopAudio.setBoolean(false);
   }
 }
