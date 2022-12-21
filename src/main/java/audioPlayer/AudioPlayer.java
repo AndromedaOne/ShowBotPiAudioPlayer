@@ -77,8 +77,11 @@ public class AudioPlayer {
   }
 
   public void stop() {
-    if (m_audioClip != null) {
+    if ((m_audioClip != null) && isPlaying()) {
       m_audioClip.stop();
+      Log.getInstance().write("INFO: audio has been stopped");
+    } else {
+      Log.getInstance().write("WARNING: request to stop audio when nothing is playing");
     }
     m_audioFileBeingPlayed = "";
   }
@@ -90,7 +93,7 @@ public class AudioPlayer {
     return (false);
   }
 
-  public String fileBeingPlayed() {
+  public String getAudioFileBeingPlayed() {
     return (m_audioFileBeingPlayed);
   }
 }
