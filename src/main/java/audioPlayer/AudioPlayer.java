@@ -10,16 +10,18 @@ import java.io.IOException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import logger.Log;
 
 // Audio player interface. implemented as a singlton to ensure only one exists
-public class AudioPlayer {
+public class AudioPlayer implements LineListener {
   private static AudioPlayer m_instance = new AudioPlayer();
   private Clip m_audioClip = null;
-  private String m_audioFileBeingPlayed;
+  private String m_audioFileBeingPlayed = new String("");
 
   private AudioPlayer() {
 
@@ -37,7 +39,7 @@ public class AudioPlayer {
   // already
   // playing an audio file, that audio will be stopped and the new one started.
   // returns true on success, false on error
-  public boolean playAudioFile(File audioFilePath) {
+  public boolean playAudioFile(String audioFilePath, String audioFile) {
     if (m_audioClip != null) {
       m_audioClip.stop();
       m_audioClip.close();
@@ -46,7 +48,8 @@ public class AudioPlayer {
     AudioInputStream audioInputStream;
     try {
       try {
-        audioInputStream = AudioSystem.getAudioInputStream(audioFilePath.getAbsoluteFile());
+        File audioFileFullPath = new File(audioFilePath + "/" + audioFile);
+        audioInputStream = AudioSystem.getAudioInputStream(audioFileFullPath.getAbsoluteFile());
       } catch (UnsupportedAudioFileException e) {
         Log.getInstance().write("ERROR: unsupported audio file: " + audioFilePath);
         Log.getInstance().writeException(e);
@@ -56,6 +59,7 @@ public class AudioPlayer {
       }
       try {
         m_audioClip = AudioSystem.getClip();
+        m_audioClip.addLineListener(this);
         m_audioClip.open(audioInputStream);
       } catch (LineUnavailableException e) {
         Log.getInstance().write("ERROR: Audio System threw line unavailable, not playing clip");
@@ -72,7 +76,7 @@ public class AudioPlayer {
       return false;
     }
     m_audioClip.start();
-    m_audioFileBeingPlayed = audioFilePath.toString();
+    m_audioFileBeingPlayed = audioFile;
     return true;
   }
 
@@ -95,5 +99,14 @@ public class AudioPlayer {
 
   public String getAudioFileBeingPlayed() {
     return (m_audioFileBeingPlayed);
+  }
+
+  // LineListener update implementation. gets called when audioClip changes state
+  @Override
+  public void update(LineEvent event) {
+    LineEvent.Type type = event.getType();
+    if (type == LineEvent.Type.STOP) {
+      m_audioFileBeingPlayed = "";
+    }
   }
 }

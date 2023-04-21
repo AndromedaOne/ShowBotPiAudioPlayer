@@ -25,7 +25,6 @@ public class NetworkTableInterface {
   private final String m_showBotPiIsConnected = "ShowBotPiIsConnected";
   private final String m_roborioAckPiConnected = "RoborioAckPiConnected";
   private final String m_noError = "";
-  
 
   private NetworkTableInstance m_ntInst = NetworkTableInstance.getDefault();
   private NetworkTable m_smartDashboardTable = m_ntInst.getTable(m_smartDashboardName);
@@ -74,7 +73,7 @@ public class NetworkTableInterface {
   public void clearRequestedAudioFileToPlay() {
     m_audioFileToPlay.setString("");
   }
-  
+
   public void setErrorStatus(String err) {
     m_errorStatus.setString(err);
   }
