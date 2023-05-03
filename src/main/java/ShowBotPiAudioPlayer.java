@@ -40,6 +40,7 @@ public class ShowBotPiAudioPlayer {
       try {
         String audioFileToPlay = m_networkTableInterface.getRequestedAudioFileToPlay();
         String audioFileBeingPlayed = AudioPlayer.getInstance().getAudioFileBeingPlayed();
+        m_networkTableInterface.setAudioIsPlaying(AudioPlayer.getInstance().isPlaying());
         m_networkTableInterface.setCurrentAudioPlaying(audioFileBeingPlayed);
         if (!audioFileToPlay.equals("") && !audioFileToPlay.equals(audioFileBeingPlayed)) {
           playAudio(audioFileToPlay);
